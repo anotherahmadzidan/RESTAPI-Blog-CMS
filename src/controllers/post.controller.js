@@ -23,6 +23,44 @@ const createPost = async (req, res, next) => {
     }
 };
 
+const getPosts = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = Math.min(parseInt(req.query.limit) || 10, 50);
+        const skip = (page - 1) * limit;
+
+        const [posts, total] = await Promise.all([
+            prisma.post.findMany({
+                skip,
+                take: limit,
+                include: {
+                    author: {
+                        select: { id: true, name: true }
+                    },
+                    category: true
+                },
+                orderBy: { createdAt: "desc" }
+            }),
+            prisma.post.count()
+        ]);
+
+        res.status(200).json({
+            success: true,
+            message: "Posts retrieved",
+            data: posts,
+            pagination: {
+                total,
+                page,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 module.exports = {
-    createPost
+    createPost,
+    getPosts
 };
