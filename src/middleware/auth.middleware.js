@@ -3,14 +3,21 @@ const jwt = require("jsonwebtoken");
 const authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader) {
         return res.status(401).json({
             success: false,
-            message: "Authentication required"
+            message: "Authorization header missing"
         });
     }
 
-    const token = authHeader.split(" ")[1];
+    const [scheme, token] = authHeader.split(" ");
+
+    if (scheme !== "Bearer" || !token) {
+        return res.status(401).json({
+            success: false,
+            message: "Invalid authorization format"
+        });
+    }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -23,5 +30,6 @@ const authenticate = (req, res, next) => {
         });
     }
 };
+
 
 module.exports = authenticate;
