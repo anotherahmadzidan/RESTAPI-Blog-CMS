@@ -49,10 +49,45 @@ const getPosts = async (req, res, next) => {
             message: "Posts retrieved",
             data: posts,
             pagination: {
-                total,
-                page,
-                totalPages: Math.ceil(total / limit)
+                totalRecords: total,
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                limit
             }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getPostById = async (req, res, next) => {
+    try {
+        const postId = Number(req.params.id);
+
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+            include: {
+                author: {
+                    select: { id: true, name: true }
+                },
+                category: true,
+                tags: {
+                    include: { tag: true }
+                }
+            }
+        });
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Post detail retrieved",
+            data: post
         });
     } catch (error) {
         next(error);
@@ -62,5 +97,6 @@ const getPosts = async (req, res, next) => {
 
 module.exports = {
     createPost,
-    getPosts
+    getPosts,
+    getPostById
 };
