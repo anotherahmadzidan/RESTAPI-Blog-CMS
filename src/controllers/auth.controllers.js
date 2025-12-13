@@ -127,10 +127,35 @@ const refreshToken = async (req, res, next) => {
     }
 };
 
+const me = async (req, res, next) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.userId },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "User profile retrieved",
+            data: user
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
 module.exports = {
     register,
     login,
-    refreshToken
+    refreshToken,
+    me
 };
 
