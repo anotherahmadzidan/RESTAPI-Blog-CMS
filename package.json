@@ -1,10 +1,10 @@
 {
   "name": "restapi-blog-cms",
   "version": "1.0.0",
-  "description": "",
+  "description": "REST API for Blog / CMS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node src/app.js"
   },
   "repository": {
     "type": "git",
