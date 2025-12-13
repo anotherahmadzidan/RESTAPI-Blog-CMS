@@ -1,10 +1,16 @@
 const prisma = require("../config/db");
 
 const checkPostOwnership = async (req, res, next) => {
-    try {
-        const postId = parseInt(req.params.id);
-        const user = req.user;
+    const postId = Number(req.params.id);
 
+    if (isNaN(postId)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid post id"
+        });
+    }
+
+    try {
         const post = await prisma.post.findUnique({
             where: { id: postId }
         });
@@ -16,15 +22,14 @@ const checkPostOwnership = async (req, res, next) => {
             });
         }
 
-        // Admin boleh bypass
-        if (user.role === "ADMIN") {
+        if (req.user.role === "ADMIN") {
             return next();
         }
 
-        if (post.authorId !== user.userId) {
+        if (post.authorId !== req.user.userId) {
             return res.status(403).json({
                 success: false,
-                message: "You do not own this resource"
+                message: "Forbidden resource access"
             });
         }
 
@@ -33,5 +38,6 @@ const checkPostOwnership = async (req, res, next) => {
         next(error);
     }
 };
+
 
 module.exports = checkPostOwnership;
