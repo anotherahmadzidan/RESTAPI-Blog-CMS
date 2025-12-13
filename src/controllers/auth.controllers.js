@@ -44,7 +44,6 @@ const register = async (req, res, next) => {
     }
 };
 
-
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -90,7 +89,48 @@ const login = async (req, res, next) => {
     }
 };
 
+const refreshToken = async (req, res, next) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return res.status(400).json({
+                success: false,
+                message: "Refresh token is required"
+            });
+        }
+
+        const decoded = jwt.verify(
+            refreshToken,
+            process.env.JWT_REFRESH_SECRET
+        );
+
+        const payload = {
+            userId: decoded.userId,
+            role: decoded.role
+        };
+
+        const newAccessToken = generateAccessToken(payload);
+
+        res.status(200).json({
+            success: true,
+            message: "Access token refreshed",
+            data: {
+                accessToken: newAccessToken
+            }
+        });
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            message: "Invalid or expired refresh token"
+        });
+    }
+};
+
+
 module.exports = {
     register,
-    login
+    login,
+    refreshToken
 };
+
