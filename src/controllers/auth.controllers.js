@@ -1,6 +1,10 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../config/db");
 
+const jwt = require("jsonwebtoken");
+const { generateAccessToken, generateRefreshToken } = require("../config/jwt");
+
+
 const register = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
@@ -40,4 +44,53 @@ const register = async (req, res, next) => {
     }
 };
 
-module.exports = { register };
+
+const login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await prisma.user.findUnique({
+            where: { email }
+        });
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials"
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials"
+            });
+        }
+
+        const payload = {
+            userId: user.id,
+            role: user.role
+        };
+
+        const accessToken = generateAccessToken(payload);
+        const refreshToken = generateRefreshToken(payload);
+
+        res.status(200).json({
+            success: true,
+            message: "Login successful",
+            data: {
+                accessToken,
+                refreshToken
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = {
+    register,
+    login
+};
