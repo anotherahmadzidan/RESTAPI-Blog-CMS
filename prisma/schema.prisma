@@ -32,20 +32,34 @@ model Category {
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   title      String
   content    String
   authorId   Int
   categoryId Int
-  author     User     @relation(fields: [authorId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category   Category   @relation(fields: [categoryId], references: [id])
+  tags       PostTag[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([title])
 }
 
 model Tag {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  posts     PostTag[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
+
+model PostTag {
+  postId Int
+  tagId  Int
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
