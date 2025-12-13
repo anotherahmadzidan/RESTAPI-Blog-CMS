@@ -1,12 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// middleware basic
 app.use(express.json());
 
-// health check
 app.get("/api/health", (req, res) => {
     res.status(200).json({
         status: "ok",
