@@ -94,9 +94,50 @@ const getPostById = async (req, res, next) => {
     }
 };
 
+const updatePost = async (req, res, next) => {
+    try {
+        const postId = Number(req.params.id);
+        const { title, content, categoryId } = req.body;
+
+        const updatedPost = await prisma.post.update({
+            where: { id: postId },
+            data: {
+                title,
+                content,
+                categoryId
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Post updated successfully",
+            data: updatedPost
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const deletePost = async (req, res, next) => {
+    try {
+        const postId = Number(req.params.id);
+
+        await prisma.post.delete({
+            where: { id: postId }
+        });
+
+        res.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
 module.exports = {
     createPost,
     getPosts,
-    getPostById
+    getPostById,
+    updatePost,
+    deletePost
 };

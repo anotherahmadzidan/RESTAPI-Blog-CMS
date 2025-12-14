@@ -10,3 +10,21 @@ router.post("/", authenticate, createPost);
 module.exports = router;
 
 router.get("/", getPosts);
+
+const checkPostOwnership = require("../middleware/ownership.middleware");
+
+router.put(
+    "/:id",
+    authenticate,
+    checkPostOwnership,
+    updatePost
+);
+
+router.delete(
+    "/:id",
+    authenticate,
+    checkPostOwnership,
+    deletePost
+);
+
+
