@@ -99,12 +99,19 @@ const updatePost = async (req, res, next) => {
         const postId = Number(req.params.id);
         const { title, content, categoryId } = req.body;
 
+        if (!title && !content && !categoryId) {
+            return res.status(400).json({
+                success: false,
+                message: "No data provided to update"
+            });
+        }
+
         const updatedPost = await prisma.post.update({
             where: { id: postId },
             data: {
-                title,
-                content,
-                categoryId
+                ...(title && { title }),
+                ...(content && { content }),
+                ...(categoryId && { categoryId })
             }
         });
 
@@ -114,9 +121,16 @@ const updatePost = async (req, res, next) => {
             data: updatedPost
         });
     } catch (error) {
+        if (error.code === "P2025") {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
         next(error);
     }
 };
+
 
 const deletePost = async (req, res, next) => {
     try {
@@ -128,9 +142,16 @@ const deletePost = async (req, res, next) => {
 
         res.status(204).send();
     } catch (error) {
+        if (error.code === "P2025") {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
         next(error);
     }
 };
+
 
 
 
