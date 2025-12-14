@@ -7,12 +7,14 @@ const PORT = process.env.PORT || 3000;
 const authRoutes = require("./routes/auth.routes");
 const postRoutes = require("./routes/post.routes");
 
+const logger = require("./middleware/logger.middleware");
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/posts", postRoutes);
 
+app.use(logger);
 
 app.get("/api/health", (req, res) => {
     res.status(200).json({
@@ -26,3 +28,6 @@ app.get("/api/health", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+const errorHandler = require("./middleware/error.middleware");
+app.use(errorHandler);
