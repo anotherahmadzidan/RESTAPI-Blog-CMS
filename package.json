@@ -4,7 +4,8 @@
   "description": "REST API for Blog / CMS",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/app.js"
+    "dev": "node src/app.js",
+    "seed": "node prisma/seed.js"
   },
   "repository": {
     "type": "git",
