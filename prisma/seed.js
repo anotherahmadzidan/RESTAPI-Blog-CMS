@@ -4,20 +4,25 @@ const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
-    console.log("🌱 Start seeding...");
+    console.log("🌱 Start seeding...\n");
 
-    // Hapus data (child -> parent)
+    //CLEANING DATA
+    console.log("🧹 Cleaning existing data...");
     await prisma.postTag.deleteMany();
     await prisma.post.deleteMany();
     await prisma.tag.deleteMany();
     await prisma.category.deleteMany();
     await prisma.user.deleteMany();
+    console.log("✅ Existing data cleaned\n");
 
-    // Password hash
+    //PASSWORD HASHING
+    console.log("🔐 Hashing passwords...");
     const passwordAdmin = await bcrypt.hash("Admin1234", 10);
     const passwordUser = await bcrypt.hash("User1234", 10);
+    console.log("✅ Passwords hashed\n");
 
-    // Admin
+    //USERS
+    console.log("👤 Creating admin...");
     const admin = await prisma.user.create({
         data: {
             name: "Admin",
@@ -26,9 +31,10 @@ async function main() {
             role: "ADMIN"
         }
     });
+    console.log(`✅ Admin created: ${admin.email}`);
 
-    // Users
-    const users = await prisma.user.createMany({
+    console.log("👥 Creating users...");
+    await prisma.user.createMany({
         data: [
             {
                 name: "User One",
@@ -47,9 +53,11 @@ async function main() {
             }
         ]
     });
+    console.log("✅ Users created\n");
 
-    // Categories
-    const categories = await prisma.category.createMany({
+    //CATEGORIES
+    console.log("📂 Creating categories...");
+    await prisma.category.createMany({
         data: [
             { name: "Technology" },
             { name: "Programming" },
@@ -58,15 +66,11 @@ async function main() {
             { name: "News" }
         ]
     });
+    console.log("✅ Categories created\n");
 
-    console.log("✅ Users & categories seeded");
-
-    console.log("🌱 Seeding finished");
-
-    const allUsers = await prisma.user.findMany();
-    const allCategories = await prisma.category.findMany();
-
-    const tags = await prisma.tag.createMany({
+    //TAGS
+    console.log("🏷️ Creating tags...");
+    await prisma.tag.createMany({
         data: [
             { name: "NodeJS" },
             { name: "Backend" },
@@ -75,9 +79,17 @@ async function main() {
             { name: "Database" }
         ]
     });
-    const allTags = await prisma.tag.findMany();
+    console.log("✅ Tags created\n");
 
-    // Posts
+    //FETCH RELATIONS
+    console.log("📥 Fetching users, categories, and tags...");
+    const allUsers = await prisma.user.findMany();
+    const allCategories = await prisma.category.findMany();
+    const allTags = await prisma.tag.findMany();
+    console.log("✅ Data fetched\n");
+
+    //POSTS & RELATIONS
+    console.log("📝 Creating posts and tag relations...");
     for (let i = 1; i <= 5; i++) {
         const post = await prisma.post.create({
             data: {
@@ -100,16 +112,20 @@ async function main() {
                 }
             ]
         });
+
+        console.log(`   📄 Post ${i} created`);
     }
 
-    console.log("✅ Posts & tags seeded");
+    console.log("\n✅ Posts & relations seeded");
+    console.log("🌱 Seeding finished successfully");
 }
 
 main()
     .catch((e) => {
-        console.error(e);
+        console.error("❌ Seeding failed:", e);
         process.exit(1);
     })
     .finally(async () => {
         await prisma.$disconnect();
+        console.log("🔌 Prisma disconnected");
     });
