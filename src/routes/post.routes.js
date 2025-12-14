@@ -3,20 +3,32 @@ const authenticate = require("../middleware/auth.middleware");
 
 const { createPost, getPosts } = require("../controllers/post.controller");
 
+const validate = require("../middleware/validation.middleware");
+
+const {
+    createPostSchema,
+    updatePostSchema
+} = require("../validators/post.validator");
+
+const checkPostOwnership = require("../middleware/ownership.middleware");
+
 const router = express.Router();
 
-router.post("/", authenticate, createPost);
-
-module.exports = router;
 
 router.get("/", getPosts);
 
-const checkPostOwnership = require("../middleware/ownership.middleware");
+router.post(
+    "/",
+    authenticate,
+    validate(createPostSchema),
+    createPost
+);
 
 router.put(
     "/:id",
     authenticate,
     checkPostOwnership,
+    validate(updatePostSchema),
     updatePost
 );
 
@@ -27,4 +39,4 @@ router.delete(
     deletePost
 );
 
-
+module.exports = router;

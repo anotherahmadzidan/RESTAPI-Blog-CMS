@@ -8,7 +8,7 @@ const createPost = async (req, res, next) => {
             data: {
                 title,
                 content,
-                categoryId,
+                categoryId: Number(categoryId),
                 authorId: req.user.userId
             }
         });
@@ -28,21 +28,47 @@ const getPosts = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = Math.min(parseInt(req.query.limit) || 10, 50);
         const skip = (page - 1) * limit;
+        const search = req.query.search;
+        const categoryId = req.query.categoryId;
+        const sortBy = req.query.sortBy || "createdAt";
+        const order = req.query.order === "asc" ? "asc" : "desc";
+        const allowedSortFields = ["createdAt", "title", "id"];
+        const sortField = allowedSortFields.includes(sortBy)
+            ? sortBy
+            : "createdAt";
+
+
+        const where = {};
+
+        if (categoryId) {
+            where.categoryId = Number(categoryId);
+        }
+
+        if (search) {
+            where.OR = [
+                { title: { contains: search, mode: "insensitive" } },
+                { content: { contains: search, mode: "insensitive" } }
+            ];
+        }
+
 
         const [posts, total] = await Promise.all([
             prisma.post.findMany({
+                where,
                 skip,
                 take: limit,
                 include: {
-                    author: {
-                        select: { id: true, name: true }
-                    },
+                    author: { select: { id: true, name: true } },
                     category: true
                 },
-                orderBy: { createdAt: "desc" }
+                orderBy: {
+                    [sortField]: order
+                }
+
             }),
-            prisma.post.count()
+            prisma.post.count({ where })
         ]);
+
 
         res.status(200).json({
             success: true,
