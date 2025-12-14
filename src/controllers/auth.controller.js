@@ -1,9 +1,12 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../config/db");
-
 const jwt = require("jsonwebtoken");
-const { generateAccessToken, generateRefreshToken } = require("../config/jwt");
 
+const {
+    generateAccessToken,
+    generateRefreshToken,
+    refreshTokenConfig
+} = require("../config/jwt");
 
 const register = async (req, res, next) => {
     try {
@@ -60,7 +63,6 @@ const login = async (req, res, next) => {
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
@@ -89,20 +91,20 @@ const login = async (req, res, next) => {
     }
 };
 
-const refreshToken = async (req, res, next) => {
+const refresh = async (req, res, next) => {
     try {
         const { refreshToken } = req.body;
 
         if (!refreshToken) {
             return res.status(400).json({
                 success: false,
-                message: "Refresh token is required"
+                message: "Refresh token required"
             });
         }
 
         const decoded = jwt.verify(
             refreshToken,
-            process.env.JWT_REFRESH_SECRET
+            refreshTokenConfig.secret
         );
 
         const payload = {
@@ -120,10 +122,7 @@ const refreshToken = async (req, res, next) => {
             }
         });
     } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: "Invalid or expired refresh token"
-        });
+        next(error);
     }
 };
 
@@ -150,12 +149,9 @@ const me = async (req, res, next) => {
     }
 };
 
-
-
 module.exports = {
     register,
     login,
-    refreshToken,
+    refresh,
     me
 };
-
