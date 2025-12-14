@@ -27,8 +27,8 @@ Mendaftarkan pengguna baru ke dalam sistem.
 
     ```json
     {
-      "name": "John Doe",
-      "email": "john@example.com",
+      "name": "Achmad Zidan",
+      "email": "achmad@zidan.com",
       "password": "Password123" // Min 8 chars, 1 uppercase, 1 number
     }
     ```
@@ -41,8 +41,8 @@ Mendaftarkan pengguna baru ke dalam sistem.
       "message": "User registered successfully",
       "data": {
         "id": 1,
-        "name": "John Doe",
-        "email": "john@example.com"
+        "name": "Achmad Zidan",
+        "email": "achmad@zidan.com"
       }
     }
     ```
@@ -57,7 +57,7 @@ Masuk untuk mendapatkan Access Token dan Refresh Token.
 
     ```json
     {
-      "email": "john@example.com",
+      "email": "achmad@zidan.com",
       "password": "Password123"
     }
     ```
@@ -116,10 +116,10 @@ Mendapatkan data profil user yang sedang login.
       "message": "User profile retrieved",
       "data": {
         "id": 1,
-        "name": "John Doe",
-        "email": "john@example.com",
+        "name": "Achmad Zidan",
+        "email": "achmad@zidan.com",
         "role": "USER",
-        "createdAt": "2023-10-01T12:00:00.000Z"
+        "createdAt": "2025-10-01T12:00:00.000Z"
       }
     }
     ```
@@ -356,7 +356,7 @@ Mengecek status server dan koneksi database.
       "status": "ok",
       "environment": "development",
       "uptime": 123.45,
-      "timestamp": "2023-10-01T12:00:00.000Z",
+      "timestamp": "2025-10-01T12:00:00.000Z",
       "services": {
         "database": "connected"
       }
