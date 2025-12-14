@@ -2,11 +2,11 @@ const bcrypt = require("bcrypt");
 const prisma = require("../config/db");
 const jwt = require("jsonwebtoken");
 
+const { refreshTokenConfig } = require("../config/jwt");
 const {
     generateAccessToken,
-    generateRefreshToken,
-    refreshTokenConfig
-} = require("../config/jwt");
+    generateRefreshToken
+} = require("../utils/jwt.util");
 
 const register = async (req, res, next) => {
     try {

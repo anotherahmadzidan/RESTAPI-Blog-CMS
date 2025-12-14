@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+require("dotenv").config(); // Pastikan env terbaca jika file ini dipanggil terpisah
 
 const accessTokenConfig = {
     secret: process.env.JWT_SECRET,
@@ -10,21 +10,7 @@ const refreshTokenConfig = {
     expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d"
 };
 
-const generateAccessToken = (payload) => {
-    return jwt.sign(payload, accessTokenConfig.secret, {
-        expiresIn: accessTokenConfig.expiresIn
-    });
-};
-
-const generateRefreshToken = (payload) => {
-    return jwt.sign(payload, refreshTokenConfig.secret, {
-        expiresIn: refreshTokenConfig.expiresIn
-    });
-};
-
 module.exports = {
-    generateAccessToken,
-    generateRefreshToken,
     accessTokenConfig,
     refreshTokenConfig
 };
