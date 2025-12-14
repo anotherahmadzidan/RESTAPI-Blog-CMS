@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 const authRoutes = require("./routes/auth.routes");
 const postRoutes = require("./routes/post.routes");
+const healthRoutes = require("./routes/health.routes");
 
 const logger = require("./middleware/logger.middleware");
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/health", healthRoutes);
 
 app.use(logger);
 

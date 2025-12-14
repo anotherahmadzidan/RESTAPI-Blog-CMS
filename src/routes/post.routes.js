@@ -1,7 +1,13 @@
 const express = require("express");
 const authenticate = require("../middleware/auth.middleware");
 
-const { createPost, getPosts } = require("../controllers/post.controller");
+const {
+    createPost,
+    getPosts,
+    getPostById, // Tambahkan ini sekalian untuk jaga-jaga
+    updatePost,  // Tambahkan ini (penyebab error sekarang)
+    deletePost   // Tambahkan ini (agar tidak error lagi setelah ini)
+} = require("../controllers/post.controller");
 
 const validate = require("../middleware/validation.middleware");
 
