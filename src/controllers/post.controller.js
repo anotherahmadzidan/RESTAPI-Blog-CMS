@@ -37,7 +37,6 @@ const getPosts = async (req, res, next) => {
             ? sortBy
             : "createdAt";
 
-
         const where = {};
 
         if (categoryId) {
@@ -46,11 +45,10 @@ const getPosts = async (req, res, next) => {
 
         if (search) {
             where.OR = [
-                { title: { contains: search, mode: "insensitive" } },
-                { content: { contains: search, mode: "insensitive" } }
+                { title: { contains: search } },
+                { content: { contains: search } }
             ];
         }
-
 
         const [posts, total] = await Promise.all([
             prisma.post.findMany({
@@ -64,11 +62,9 @@ const getPosts = async (req, res, next) => {
                 orderBy: {
                     [sortField]: order
                 }
-
             }),
             prisma.post.count({ where })
         ]);
-
 
         res.status(200).json({
             success: true,
