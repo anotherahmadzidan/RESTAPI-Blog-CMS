@@ -12,27 +12,32 @@ const createPost = async (req, res, next) => {
                 authorId: req.user.userId,
                 tags: (tags && Array.isArray(tags) && tags.length > 0)
                     ? {
-                        create: tags.map((tagId) => ({
-                            tag: { connect: { id: Number(tagId) } },
-                        })),
+                        create: tags.map(tagId => ({
+                            tag: { connect: { id: Number(tagId) } }
+                        }))
                     }
-                    : undefined,
+                    : undefined
             },
             include: {
                 tags: {
-                    include: {
-                        tag: true
+                    select: {
+                        tagId: true 
                     }
-                },
-                category: true
+                }
             }
         });
+
+        const formattedPost = {
+            ...post,
+            tags: post.tags.map(item => item.tagId)
+        };
 
         res.status(201).json({
             success: true,
             message: "Post created successfully",
-            data: post
+            data: formattedPost
         });
+
     } catch (error) {
         next(error);
     }
