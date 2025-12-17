@@ -10,13 +10,13 @@ const createPost = async (req, res, next) => {
                 content,
                 categoryId: Number(categoryId),
                 authorId: req.user.userId,
-                tags: {
-                    create: tags.map(tagId => ({
-                        tag: {
-                            connect: { id: Number(tagId) }
-                        }
-                    }))
-                }
+                tags: (tags && Array.isArray(tags) && tags.length > 0)
+                    ? {
+                        create: tags.map((tagId) => ({
+                            tag: { connect: { id: Number(tagId) } },
+                        })),
+                    }
+                    : undefined,
             }
         });
 
