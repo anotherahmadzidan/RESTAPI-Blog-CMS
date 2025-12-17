@@ -17,6 +17,14 @@ const createPost = async (req, res, next) => {
                         })),
                     }
                     : undefined,
+            },
+            include: {
+                tags: {
+                    include: {
+                        tag: true
+                    }
+                },
+                category: true
             }
         });
 
