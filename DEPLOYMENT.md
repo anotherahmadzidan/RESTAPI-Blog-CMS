@@ -3,13 +3,13 @@
 ## 1. Project Details
 
 - **Repository GitHub:** <https://github.com/anotherahmadzidan/RESTAPI-Blog-CMS.git>
-- **Production URL:** <http://44.200.94.224:3000/api>
-- **Health Check:** <http://44.200.94.224:3000/api/health>
+- **Production URL:** <http://100.48.123.55:3000/api>
+- **Health Check:** <http://100.48.123.55:3000/api/health>
 
 ## 2. Server Details (AWS EC2)
 
 - **Instance ID:** i-06415875079038f88
-- **IP Address:** 44.200.94.224
+- **IP Address:** 100.48.123.55
 - **Region:** us-east-1
 - **OS:** Ubuntu Server 22.04 LTS
 - **Instance Type:** t3.micro
@@ -23,7 +23,7 @@
 
 1. Launch EC2 Instance (Ubuntu 22.04)
 2. Setup Security Group (Open port 22, 80, 3000)
-3. SSH ke server: `ssh -i key.pem ubuntu@44.200.94.224`
+3. SSH ke server: `ssh -i key.pem ubuntu@100.48.123.55`
 4. Install Dependencies Server:
 
     ```bash

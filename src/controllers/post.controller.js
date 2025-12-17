@@ -2,14 +2,21 @@ const prisma = require("../config/db");
 
 const createPost = async (req, res, next) => {
     try {
-        const { title, content, categoryId } = req.body;
+        const { title, content, categoryId, tags } = req.body;
 
         const post = await prisma.post.create({
             data: {
                 title,
                 content,
                 categoryId: Number(categoryId),
-                authorId: req.user.userId
+                authorId: req.user.userId,
+                tags: {
+                    create: tags.map(tagId => ({
+                        tag: {
+                            connect: { id: Number(tagId) }
+                        }
+                    }))
+                }
             }
         });
 
